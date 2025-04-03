@@ -603,7 +603,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.0000002, z: 6.123235e-17}
+  m_Size: {x: 1, y: 1.0000002, z: 1.0000002}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &646582033
 GameObject:
@@ -744,13 +744,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2.73
+  m_Height: 2.05
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.12, z: 0}
+  m_MinMoveDistance: 0
+  m_Center: {x: 0, y: -0.15, z: 0}
 --- !u!114 &728722209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -763,7 +763,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6890472db747e4a8507f278991d681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 5
+  defaultPlayerSpeed: 5
+  sprintingPlayerSpeed: 10
   rotationSpeed: 5
   cameraTransform: {fileID: 330585546}
 --- !u!114 &728722210
