@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    PlayerInput playerInput;
     CharacterController characterController;
 
 
@@ -17,53 +16,62 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Transform cameraTransform;
 
-    private bool isSprinting;
+    private bool isSprintPressed;
 
     bool isJumpPressed = false;
 
-    private void OnEnable()
-    {
-        playerInput.Player.Enable();
-    }
+    [SerializeField] float jumpHeight = 2f;
+    [SerializeField] float jumpGravity = -10f;
+    [SerializeField] float groundedGravity = -3f;
 
-    private void OnDisable()
-    {
-        playerInput.Player.Disable();
-    }
+    private bool isGrounded;
 
+    private Vector3 velocity;
     void Awake()
     {
-        playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
-
-        playerInput.Player.Jump.started += OnJump;
-        playerInput.Player.Jump.canceled += OnJump;
-
     }
 
     // Update is called once per frame
     void Update()
     {
         Movement();
-        Sprinting();
+        HandleJump();
+        HandleSprint();
+        Debug.Log("Is Grounded: " + isGrounded);
     }
 
 
-
-    void OnMove(InputValue moveVal)
+    private void OnJump(InputValue jumpVal)
     {
-        movement = moveVal.Get<Vector2>();
-    }
-
-    void OnJump(InputAction.CallbackContext context)
-    {
-        isJumpPressed = context.ReadValueAsButton();
+        isJumpPressed = jumpVal.Get<float>() > 0;
         Debug.Log(isJumpPressed);
     }
 
-    void handleJump()
-    {
 
+
+    void HandleJump()
+    {
+        isGrounded = characterController.isGrounded;
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = groundedGravity;
+        }
+
+        if(isJumpPressed && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * jumpGravity);
+            isJumpPressed = false;
+        }
+
+        velocity.y = jumpGravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
+
+    }
+    void OnMove(InputValue moveVal)
+    {
+        movement = moveVal.Get<Vector2>();
     }
 
     private void Movement()
@@ -88,16 +96,19 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Sprinting()
+    private void OnSprint(InputValue sprintVal)
     {
+        isSprintPressed = sprintVal.Get<float>() > 0;
+    }
 
-        if (Input.GetKey(KeyCode.LeftShift))
+    void HandleSprint()
+    {
+        if (isSprintPressed)
         {
             playerSpeed = sprintingPlayerSpeed;
         } else
         {
             playerSpeed = defaultPlayerSpeed;
         }
-        
     }
 }
