@@ -6,23 +6,29 @@ public class PlayerMovement : MonoBehaviour
 {
     CharacterController characterController;
 
+    [SerializeField] private Transform cameraTransform;
 
 
     private Vector2 movement;
     private float playerSpeed;
     [SerializeField] private float defaultPlayerSpeed = 5f;
     [SerializeField] private float sprintingPlayerSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 5f;
+    private float rotationSpeed = 5f;
 
-    [SerializeField] private Transform cameraTransform;
 
-    private bool isSprintPressed;
+    private bool isSprintPressed = false;
 
     bool isJumpPressed = false;
+    bool isJumping = false;
 
-    [SerializeField] float jumpHeight = 2f;
-    [SerializeField] float jumpGravity = -10f;
-    [SerializeField] float groundedGravity = -3f;
+    float initialJumpVelocity;
+    [SerializeField] private float maxJumpHeight = 5.0f;
+    [SerializeField] private float maxJumpTime = 0.7f;
+
+
+    float gravity;
+    float groundedGravity = -0.5f;
+
 
     private bool isGrounded;
 
@@ -30,45 +36,78 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        SetUpJumpVariables();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Movement();
-        HandleJump();
         HandleSprint();
         Debug.Log("Is Grounded: " + isGrounded);
+        Movement();
+
+
+        HandleGravity();
+        HandleJump();
+
     }
 
+    void SetUpJumpVariables()
+    {
+        //Math to make jump variables accurate
+        float timeToApex = maxJumpTime / 2;
+        gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+        initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
+    }
 
     private void OnJump(InputValue jumpVal)
     {
+        //gets the value from isJumpPressed as a float (0 = not pressed, 1 = pressed) and converts it to a boolean
         isJumpPressed = jumpVal.Get<float>() > 0;
         Debug.Log(isJumpPressed);
     }
 
-
-
     void HandleJump()
     {
-        isGrounded = characterController.isGrounded;
-
-        if (isGrounded && velocity.y < 0)
+        if (!isJumping && characterController.isGrounded == true && isJumpPressed)
         {
-            velocity.y = groundedGravity;
-        }
+            isJumping = true;
+            currentMovement.y = initialJumpVelocity * 0.5f;
 
-        if(isJumpPressed && isGrounded)
+            //Detects when player lands
+        } else if (!isJumpPressed && isJumping && characterController.isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * jumpGravity);
-            isJumpPressed = false;
+            isJumping = false;
         }
-
-        velocity.y = jumpGravity * Time.deltaTime;
-        characterController.Move(velocity * Time.deltaTime);
-
+            
     }
+
+    private Vector3 currentMovement;
+
+    void HandleGravity ()
+    {
+        //Detects when player is falling or releases the jump button and speeds the fall up
+        bool isFalling = currentMovement.y <= 0 || !isJumpPressed;
+        float fallMultiplier = 2.0f;
+
+        if (characterController.isGrounded)
+        {
+            currentMovement.y = groundedGravity;
+        } else if (isFalling) {
+            float previousYVelocity = currentMovement.y;
+            float newYVelocity = currentMovement.y + (gravity * fallMultiplier * Time.deltaTime);
+        //Also clamps falling velocity so you dont fall above -40 speed
+            float nextYVelocity = Mathf.Max((previousYVelocity + newYVelocity) * 0.5f, -40.0f);
+            currentMovement.y = nextYVelocity;
+        } else {
+            //Uses velocity verlet to make jump trajectories consistent between framerates
+            float previousYVelocity = currentMovement.y;
+            float newYVelocity = currentMovement.y + (gravity * Time.deltaTime);
+            float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
+            currentMovement.y = nextYVelocity;
+        }
+    }
+
     void OnMove(InputValue moveVal)
     {
         movement = moveVal.Get<Vector2>();
@@ -79,21 +118,23 @@ public class PlayerMovement : MonoBehaviour
         float MoveX = movement.x;
         float MoveZ = movement.y;
 
-
+        //Detects the position of the camera and moves the player based off its position
         Vector3 cameraForward = cameraTransform.forward.normalized;
         Vector3 cameraRight = cameraTransform.right.normalized;
         cameraForward.y = 0; cameraRight.y = 0;
 
-        Vector3 ActualMovement = (cameraForward * MoveZ) + (cameraRight * MoveX);
+        Vector3 horizontalMovement = (cameraForward * MoveZ) + (cameraRight * MoveX);
 
-        if (ActualMovement.magnitude > 0.01f)
+        currentMovement = new Vector3(horizontalMovement.x * playerSpeed, currentMovement.y, horizontalMovement.z * playerSpeed);
+
+            characterController.Move(currentMovement * Time.deltaTime);
+
+        if (horizontalMovement.magnitude > 0.01f)
         {
-            characterController.Move(ActualMovement * Time.deltaTime * playerSpeed);
-
-            Quaternion targetRotation = Quaternion.LookRotation(ActualMovement);
+            Quaternion targetRotation = Quaternion.LookRotation(horizontalMovement);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
         }
+         
     }
 
     private void OnSprint(InputValue sprintVal)
