@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,11 +9,15 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Transform cameraTransform;
 
+    private PlayerSize playerSize;
 
     private Vector2 movement;
     private float playerSpeed;
-    [SerializeField] private float defaultPlayerSpeed = 5f;
+    [SerializeField] private float walkingPlayerSpeed = 5f;
     [SerializeField] private float sprintingPlayerSpeed = 5f;
+    [SerializeField] private float shrunkenWalkingPlayerSpeed = 5f;
+    [SerializeField] private float shrunkenSprintingPlayerSpeed = 5f;
+
     private float rotationSpeed = 5f;
 
 
@@ -22,15 +27,21 @@ public class PlayerMovement : MonoBehaviour
     bool isJumping = false;
 
     float initialJumpVelocity;
-    [SerializeField] private float maxJumpHeight = 5.0f;
+
+    private float maxJumpHeight;
+
     [SerializeField] private float maxJumpTime = 0.7f;
 
+    [SerializeField] private float normalMaxJumpHeight = 5.0f;
+    [SerializeField] private float shrunkenMaxJumpHeight = 1.0f;
 
     float gravity;
     float groundedGravity = -0.5f;
 
 
     private bool isGrounded;
+
+    [HideInInspector] public bool isShrunken = false;
 
     private Vector3 velocity;
     void Awake()
@@ -42,10 +53,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleSprint();
-        Debug.Log("Is Grounded: " + isGrounded);
+        HandleSpeed();
         Movement();
 
+        Debug.Log("Shrunken: " + isShrunken);
+        Debug.Log("Sprinting " + isSprintPressed);
 
         HandleGravity();
         HandleJump();
@@ -69,6 +81,15 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJump()
     {
+        if (isShrunken)
+        {
+            maxJumpHeight = shrunkenMaxJumpHeight;
+        } else
+        {
+            maxJumpHeight = normalMaxJumpHeight;
+        }
+
+
         if (!isJumping && characterController.isGrounded == true && isJumpPressed)
         {
             isJumping = true;
@@ -142,14 +163,29 @@ public class PlayerMovement : MonoBehaviour
         isSprintPressed = sprintVal.Get<float>() > 0;
     }
 
-    void HandleSprint()
+    public void HandleSpeed()
     {
-        if (isSprintPressed)
+        if (isShrunken)
         {
-            playerSpeed = sprintingPlayerSpeed;
-        } else
-        {
-            playerSpeed = defaultPlayerSpeed;
+            if (isSprintPressed)
+            {
+                playerSpeed = shrunkenSprintingPlayerSpeed;
+            } else
+            {
+                playerSpeed = shrunkenWalkingPlayerSpeed;
+            }
         }
+        if (!isShrunken)
+        {
+            if (isSprintPressed)
+            {
+                playerSpeed = sprintingPlayerSpeed;
+            }
+            else
+            {
+                playerSpeed = walkingPlayerSpeed;
+            }
+        }
+
     }
 }
