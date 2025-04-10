@@ -9,7 +9,6 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Transform cameraTransform;
 
-    private PlayerSize playerSize;
 
     private Vector2 movement;
     private float playerSpeed;
@@ -28,12 +27,12 @@ public class PlayerMovement : MonoBehaviour
 
     float initialJumpVelocity;
 
-    private float maxJumpHeight;
+    private float maxJumpHeight = 5.0f;
 
-    [SerializeField] private float maxJumpTime = 0.7f;
+    [SerializeField] private float maxJumpTime;
 
     [SerializeField] private float normalMaxJumpHeight = 5.0f;
-    [SerializeField] private float shrunkenMaxJumpHeight = 1.0f;
+    [SerializeField] private float shrunkenMaxJumpHeight = 2.0f;
 
     float gravity;
     float groundedGravity = -0.5f;
@@ -56,8 +55,8 @@ public class PlayerMovement : MonoBehaviour
         HandleSpeed();
         Movement();
 
-        Debug.Log("Shrunken: " + isShrunken);
-        Debug.Log("Sprinting " + isSprintPressed);
+        //Debug.Log("Shrunken: " + isShrunken);
+        //Debug.Log("Sprinting " + isSprintPressed);
 
         HandleGravity();
         HandleJump();
@@ -81,12 +80,12 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJump()
     {
-        if (isShrunken)
-        {
-            maxJumpHeight = shrunkenMaxJumpHeight;
-        } else
+        if (isShrunken == false)
         {
             maxJumpHeight = normalMaxJumpHeight;
+        } else
+        {
+            maxJumpHeight = shrunkenMaxJumpHeight;
         }
 
 

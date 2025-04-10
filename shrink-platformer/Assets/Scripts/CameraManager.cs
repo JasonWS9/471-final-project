@@ -5,7 +5,11 @@ public class CameraManager : MonoBehaviour
 {
 
 
-    [SerializeField] public CinemachineOrbitalFollow orbitCam;
+    private CinemachineOrbitalFollow orbitCam;
+    private CinemachineDecollider decollider;
+    private CinemachineRotationComposer rotationComposer;
+
+    private float shrunkenOrbitModifier = 0.2f;
 
     private float normalTopOrbitHeight;
     private float normalTopOrbitRadius;
@@ -26,10 +30,19 @@ public class CameraManager : MonoBehaviour
     public float shrunkenBottomOrbitHeight;
     public float shrunkenBottomOrbitRadius;
 
+    private float normalDecolliderRadius;
+    [SerializeField] private float shrunkenDecolliderRadius = 2.0f;
+
+    private float normalRotationComposerOffset;
+    private float shrunkenRotationComposerOffset = 0.225f;
 
 
     void Start()
     {
+        orbitCam = GetComponent<CinemachineOrbitalFollow>();
+        decollider = GetComponent<CinemachineDecollider>();
+        rotationComposer = GetComponent<CinemachineRotationComposer>();
+
         normalTopOrbitHeight = orbitCam.Orbits.Top.Height;
         normalTopOrbitRadius = orbitCam.Orbits.Top.Radius;
 
@@ -38,16 +51,26 @@ public class CameraManager : MonoBehaviour
 
         normalBottomOrbitHeight = orbitCam.Orbits.Bottom.Height;
         normalBottomOrbitRadius = orbitCam.Orbits.Bottom.Radius;
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+        shrunkenTopOrbitHeight = normalTopOrbitHeight * shrunkenOrbitModifier;
+        shrunkenTopOrbitRadius = normalTopOrbitRadius * shrunkenOrbitModifier;
 
+        shrunkenMiddleOrbitHeight = normalMiddleOrbitHeight * shrunkenOrbitModifier;
+        shrunkenMiddleOrbitRadius = normalMiddleOrbitRadius * shrunkenOrbitModifier;
+
+        shrunkenBottomOrbitHeight = normalBottomOrbitHeight * shrunkenOrbitModifier;
+        shrunkenBottomOrbitRadius = normalBottomOrbitRadius * shrunkenOrbitModifier;
+
+        normalDecolliderRadius = decollider.CameraRadius;
+
+        normalRotationComposerOffset = rotationComposer.TargetOffset.y;
+       
     }
 
     public void OnPlayerShrink()
     {
+        
+
         orbitCam.Orbits.Top.Height = shrunkenTopOrbitHeight;
         orbitCam.Orbits.Top.Radius = shrunkenTopOrbitRadius;
 
@@ -56,6 +79,10 @@ public class CameraManager : MonoBehaviour
 
         orbitCam.Orbits.Bottom.Height = shrunkenBottomOrbitHeight;
         orbitCam.Orbits.Bottom.Radius = shrunkenBottomOrbitRadius;
+
+        decollider.CameraRadius = shrunkenDecolliderRadius;
+
+        rotationComposer.TargetOffset.y = shrunkenRotationComposerOffset;
     }
 
     public void OnPlayerRegrow()
@@ -68,5 +95,10 @@ public class CameraManager : MonoBehaviour
 
         orbitCam.Orbits.Bottom.Height = normalBottomOrbitHeight;
         orbitCam.Orbits.Bottom.Radius = normalBottomOrbitRadius;
+
+        decollider.CameraRadius = normalDecolliderRadius;
+
+        rotationComposer.TargetOffset.y = normalRotationComposerOffset;
+
     }
 }

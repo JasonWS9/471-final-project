@@ -3,16 +3,15 @@ using UnityEngine;
 
 public class PlayerSize : MonoBehaviour
 {
-    private CameraManager cameraManager;
-    private PlayerMovement playerMovement;
+    public CameraManager cameraManager;
+    public PlayerMovement playerMovement;
 
     private Transform playerTransform;
     private CharacterController characterController;
 
     private bool shrinkButtonPressed;
     private bool isShrunk = false;
-    private float shrinkScale = 0.2f;
-    private float shrinkSpeed = 1f;
+    private float shrinkScale = 0.15f;
 
     private Vector3 originalScale;
     private float originalCharacterControllerHeight;
@@ -26,8 +25,7 @@ public class PlayerSize : MonoBehaviour
     }
     void Start()
     {
-        cameraManager = new CameraManager();
-        playerMovement = new PlayerMovement();
+
         originalScale = transform.localScale;
         originalCharacterControllerHeight = characterController.height;
         originalCharacterControllerCenter = characterController.center;
@@ -79,6 +77,7 @@ public class PlayerSize : MonoBehaviour
 
         isShrunk = false;
         playerMovement.isShrunken = false;
+
         cameraManager.OnPlayerRegrow();
 
     }
