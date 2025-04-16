@@ -37,8 +37,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float normalMaxJumpHeight = 5.0f;
     private float shrunkenMaxJumpHeight;
 
-    float gravity;
-    float groundedGravity = -0.5f;
+    private float gravity;
+    private float groundedGravity = -2f;
 
     private bool isGrounded;
 
@@ -68,7 +68,6 @@ public class PlayerMovement : MonoBehaviour
 
         shrunkenWalkingPlayerSpeed = walkingPlayerSpeed * shrunkenSpeedModifier;
         shrunkenSprintingPlayerSpeed = sprintingPlayerSpeed * shrunkenSpeedModifier;
-        Debug.Log("MaxJumpHeight: " + maxJumpHeight);
     }
 
     void SetUpJumpVariables()
@@ -81,11 +80,10 @@ public class PlayerMovement : MonoBehaviour
         initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
     }
 
-    private void OnJump(InputValue jumpVal)
+    public void OnJump(InputValue jumpVal)
     {
         //gets the value from isJumpPressed as a float (0 = not pressed, 1 = pressed) and converts it to a boolean
         isJumpPressed = jumpVal.Get<float>() > 0;
-        Debug.Log(isJumpPressed);
 
         SetUpJumpVariables();
 
@@ -113,6 +111,11 @@ public class PlayerMovement : MonoBehaviour
             isJumping = false;
         }
             
+    }
+
+    public void ForceFall()
+    {
+        currentVerticalMovement.y = -1f;
     }
 
     private Vector3 currentVerticalMovement;

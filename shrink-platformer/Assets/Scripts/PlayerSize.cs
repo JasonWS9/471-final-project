@@ -11,7 +11,7 @@ public class PlayerSize : MonoBehaviour
     private CharacterController characterController;
 
     private bool shrinkButtonPressed;
-    private bool isShrunk = false;
+    [HideInInspector] public bool isShrunk = false;
     public float shrinkScale = 0.15f;
 
     private Vector3 originalScale;
@@ -21,7 +21,7 @@ public class PlayerSize : MonoBehaviour
     private float originalCharacterControllerStepOffset;
     private float originalCharacterControllerSkinWidth;
 
-    private float shrunkenSkinWidth = 0.03f;
+    private float shrunkenSkinWidth = 0.02f;
 
     public LayerMask collisionMask;
 
@@ -61,7 +61,6 @@ public class PlayerSize : MonoBehaviour
             RegrowPlayer();
             StartCoroutine(SizeChangeCooldownRoutine());
 
-
         }
     }
 
@@ -75,6 +74,9 @@ public class PlayerSize : MonoBehaviour
 
     private void ShrinkPlayer()
     {
+        characterController.Move(Vector3.up * 0.5f);
+        playerMovement.ForceFall();
+
         transform.localScale = originalScale * shrinkScale;
         
         characterController.height = originalCharacterControllerHeight;
@@ -86,7 +88,7 @@ public class PlayerSize : MonoBehaviour
         characterController.skinWidth = shrunkenSkinWidth;
 
 
-        characterController.Move(Vector3.up * 0.5f);
+      
 
         isShrunk = true;
         playerMovement.isShrunken = true;
@@ -94,13 +96,18 @@ public class PlayerSize : MonoBehaviour
 
     }
 
-    private void RegrowPlayer()
+    float radiusMod = 0.65f;
+    float bottomMod = 0.5f;
+
+    public void RegrowPlayer()
     {
+
+
 
         //Checks if the player can regrow
         float height = originalCharacterControllerHeight;
-        float radius = characterController.radius;
-        Vector3 bottom = transform.position + Vector3.up * (radius + 0.5f);
+        float radius = characterController.radius * radiusMod;
+        Vector3 bottom = transform.position + Vector3.up * (radius + bottomMod);
         Vector3 top = bottom + Vector3.up * (height - radius * 2f);
 
         bool canGrow = !Physics.CheckCapsule(bottom, top, radius, collisionMask);
@@ -132,9 +139,9 @@ public class PlayerSize : MonoBehaviour
     if (!Application.isPlaying) return;
 
     float height = originalCharacterControllerHeight;
-    float radius = characterController.radius;
+    float radius = characterController.radius * radiusMod;
 
-    Vector3 bottom = transform.position + Vector3.up * (radius + 0.5f);
+    Vector3 bottom = transform.position + Vector3.up * (radius + bottomMod);
     Vector3 top = bottom + Vector3.up * (height - radius * 2f);
 
     Gizmos.color = Color.green;

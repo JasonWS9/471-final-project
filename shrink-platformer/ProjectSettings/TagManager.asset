@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - Ground
   - Collectible
+  - ShrunkenEnemy
+  - NormalSizeEnemy
+  - InstantDeathObstacle
   layers:
   - Default
   - TransparentFX
