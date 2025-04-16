@@ -26,10 +26,15 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         if (health <= 0)
         {
             Death();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 
