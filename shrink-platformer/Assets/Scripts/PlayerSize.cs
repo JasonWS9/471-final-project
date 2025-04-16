@@ -22,6 +22,9 @@ public class PlayerSize : MonoBehaviour
     private float originalCharacterControllerSkinWidth;
 
     private float shrunkenSkinWidth = 0.03f;
+
+    public LayerMask collisionMask;
+
     private void Awake()
     {
         playerTransform = GetComponent<Transform>();
@@ -43,6 +46,9 @@ public class PlayerSize : MonoBehaviour
     private bool canChangeSize = true;
     public void OnSizeChange()
     {
+
+
+
 
         if (!isShrunk && !playerMovement.isShrunken && canChangeSize)
         {
@@ -90,6 +96,22 @@ public class PlayerSize : MonoBehaviour
 
     private void RegrowPlayer()
     {
+
+        //Checks if the player can regrow
+        float height = originalCharacterControllerHeight;
+        float radius = characterController.radius;
+        Vector3 bottom = transform.position + Vector3.up * (radius + 0.5f);
+        Vector3 top = bottom + Vector3.up * (height - radius * 2f);
+
+        bool canGrow = !Physics.CheckCapsule(bottom, top, radius, collisionMask);
+
+        if (!canGrow)
+        {
+            Debug.Log("Cant Grow");
+            return;
+        }
+
+        //Regrows player
         transform.localScale = originalScale;
         characterController.height = originalCharacterControllerHeight;
         characterController.center = originalCharacterControllerCenter;
@@ -104,5 +126,26 @@ public class PlayerSize : MonoBehaviour
         cameraManager.OnPlayerRegrow();
 
     }
+
+    private void OnDrawGizmosSelected()
+{
+    if (!Application.isPlaying) return;
+
+    float height = originalCharacterControllerHeight;
+    float radius = characterController.radius;
+
+    Vector3 bottom = transform.position + Vector3.up * (radius + 0.5f);
+    Vector3 top = bottom + Vector3.up * (height - radius * 2f);
+
+    Gizmos.color = Color.green;
+
+    // Draw the capsule (as two spheres and a line in between)
+    Gizmos.DrawWireSphere(bottom, radius);
+    Gizmos.DrawWireSphere(top, radius);
+    Gizmos.DrawLine(bottom + Vector3.forward * radius, top + Vector3.forward * radius);
+    Gizmos.DrawLine(bottom - Vector3.forward * radius, top - Vector3.forward * radius);
+    Gizmos.DrawLine(bottom + Vector3.right * radius, top + Vector3.right * radius);
+    Gizmos.DrawLine(bottom - Vector3.right * radius, top - Vector3.right * radius);
+}
 
 }

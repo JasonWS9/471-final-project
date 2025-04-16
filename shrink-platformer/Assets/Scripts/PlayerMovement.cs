@@ -13,10 +13,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 movement;
     private float playerSpeed;
-    [SerializeField] private float walkingPlayerSpeed = 5f;
-    [SerializeField] private float sprintingPlayerSpeed = 5f;
-    [SerializeField] private float shrunkenWalkingPlayerSpeed = 5f;
-    [SerializeField] private float shrunkenSprintingPlayerSpeed = 5f;
+    [SerializeField] private float walkingPlayerSpeed;
+    [SerializeField] private float sprintingPlayerSpeed;
+    private float shrunkenWalkingPlayerSpeed = 5f;
+    private float shrunkenSprintingPlayerSpeed = 5f;
+
+    public float shrunkenSpeedModifier;
 
     private float rotationSpeed = 5f;
 
@@ -59,13 +61,13 @@ public class PlayerMovement : MonoBehaviour
         HandleSpeed();
         Movement();
 
-        //Debug.Log("Shrunken: " + isShrunken);
-        //Debug.Log("Sprinting " + isSprintPressed);
-
         HandleGravity();
         HandleJump();
 
         PlatformManager();
+
+        shrunkenWalkingPlayerSpeed = walkingPlayerSpeed * shrunkenSpeedModifier;
+        shrunkenSprintingPlayerSpeed = sprintingPlayerSpeed * shrunkenSpeedModifier;
         Debug.Log("MaxJumpHeight: " + maxJumpHeight);
     }
 
