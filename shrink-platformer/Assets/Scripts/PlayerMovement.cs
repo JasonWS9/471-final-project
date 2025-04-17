@@ -47,6 +47,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+            
         characterController = GetComponent<CharacterController>();
 
         HandleGravity();
