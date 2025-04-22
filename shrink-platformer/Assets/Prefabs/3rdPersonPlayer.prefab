@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 7051690030582522779}
   - component: {fileID: 7600447167500918883}
   - component: {fileID: 1533908440361055376}
+  - component: {fileID: 657330535812201623}
   - component: {fileID: 4701815797368423421}
   m_Layer: 6
   m_Name: 3rdPersonPlayer
@@ -227,11 +228,11 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.9
+  m_Height: 1.6
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.2
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &7600447167500918883
@@ -250,10 +251,9 @@ MonoBehaviour:
   playerSize: {fileID: 1533908440361055376}
   walkingPlayerSpeed: 5
   sprintingPlayerSpeed: 10
-  shrunkenWalkingPlayerSpeed: 2
-  shrunkenSprintingPlayerSpeed: 4
+  shrunkenSpeedModifier: 0.2
   maxJumpTime: 0.8
-  normalMaxJumpHeight: 6
+  normalMaxJumpHeight: 8
   isShrunken: 0
 --- !u!114 &1533908440361055376
 MonoBehaviour:
@@ -269,7 +269,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraManager: {fileID: 0}
   playerMovement: {fileID: 7600447167500918883}
+  isShrunk: 0
   shrinkScale: 0.1
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &657330535812201623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7900847019303111499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 996386ac5068b2a40a9b4b355e01a507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerSize: {fileID: 1533908440361055376}
+  respawnPoint: {fileID: 0}
 --- !u!114 &4701815797368423421
 MonoBehaviour:
   m_ObjectHideFlags: 0

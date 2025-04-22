@@ -37,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float normalMaxJumpHeight = 5.0f;
     private float shrunkenMaxJumpHeight;
 
+    [SerializeField] private float coyoteTime = 0.05f;
+    private float lastTimeGrounded;
+
     private float gravity;
     private float groundedGravity = -2f;
 
@@ -56,10 +59,13 @@ public class PlayerMovement : MonoBehaviour
 
         SetUpJumpVariables();
 
+
+        shrunkenWalkingPlayerSpeed = walkingPlayerSpeed * shrunkenSpeedModifier;
+        shrunkenSprintingPlayerSpeed = sprintingPlayerSpeed * shrunkenSpeedModifier;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         HandleSpeed();
         Movement();
@@ -69,8 +75,6 @@ public class PlayerMovement : MonoBehaviour
 
         PlatformManager();
 
-        shrunkenWalkingPlayerSpeed = walkingPlayerSpeed * shrunkenSpeedModifier;
-        shrunkenSprintingPlayerSpeed = sprintingPlayerSpeed * shrunkenSpeedModifier;
     }
 
     void SetUpJumpVariables()
@@ -94,6 +98,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleJump()
     {
+        bool canCoyoteTime = Time.time - lastTimeGrounded <= coyoteTime;
+
         if (isShrunken == false)
         {
             maxJumpHeight = normalMaxJumpHeight;
@@ -103,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if (!isJumping && characterController.isGrounded == true && isJumpPressed)
+        if ((characterController.isGrounded || canCoyoteTime) && !isJumping && isJumpPressed)
         {
             isJumping = true;
             currentVerticalMovement.y = initialJumpVelocity * 0.5f;
@@ -132,9 +138,10 @@ public class PlayerMovement : MonoBehaviour
         if (characterController.isGrounded)
         {
             currentVerticalMovement.y = groundedGravity;
+            lastTimeGrounded = Time.time;
         } else if (isFalling) {
             float previousYVelocity = currentVerticalMovement.y;
-            float newYVelocity = currentVerticalMovement.y + (gravity * fallMultiplier * Time.deltaTime);
+            float newYVelocity = currentVerticalMovement.y + (gravity * fallMultiplier * Time.fixedDeltaTime);
 
         //Also clamps falling velocity so you dont fall above -40 speed
             float nextYVelocity = Mathf.Max((previousYVelocity + newYVelocity) * 0.5f, -40.0f);
@@ -142,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
         } else {
             //Uses velocity verlet to make jump trajectories consistent between framerates
             float previousYVelocity = currentVerticalMovement.y;
-            float newYVelocity = currentVerticalMovement.y + (gravity * Time.deltaTime);
+            float newYVelocity = currentVerticalMovement.y + (gravity * Time.fixedDeltaTime);
             float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
             currentVerticalMovement.y = nextYVelocity;
         }
@@ -168,12 +175,12 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 finalMovement = new Vector3(horizontalMovement.x, currentVerticalMovement.y, horizontalMovement.z);
 
-            characterController.Move(finalMovement * Time.deltaTime);
+            characterController.Move(finalMovement * Time.fixedDeltaTime);
 
         if (horizontalMovement.magnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
          
     }
