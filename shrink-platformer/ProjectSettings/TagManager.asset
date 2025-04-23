@@ -11,6 +11,8 @@ TagManager:
   - ShrunkenEnemy
   - NormalSizeEnemy
   - InstantDeathObstacle
+  - Key
+  - Exit
   layers:
   - Default
   - TransparentFX

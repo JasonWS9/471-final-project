@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -17,10 +18,14 @@ public class PlayerManager : MonoBehaviour
     private bool canTakeDamage = true;
     private float damageCooldown = 1f;
 
+    private bool hasKey = false;
+    private int currentLevel;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
+
     }
 
     // Update is called once per frame
@@ -97,6 +102,19 @@ public class PlayerManager : MonoBehaviour
             Death();
         }
 
+        if (hit.gameObject.CompareTag("Key"))
+        {
+            hasKey = true;
+            Debug.Log("GotKey");
+            Destroy(hit.gameObject);
+
+        }
+
+        if (hit.gameObject.CompareTag("Exit"))
+        {
+            ExitLevel();
+        }
+
     }
 
     private void Death()
@@ -107,6 +125,46 @@ public class PlayerManager : MonoBehaviour
         {
             playerSize.RegrowPlayer();
         }
+    }
+
+
+    private void ExitLevel()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if (!hasKey)
+        {
+            Debug.Log("Need Key");
+            return; 
+        } else if (hasKey)
+        {
+
+            switch (currentScene.name)
+            {
+                case "SampleScene":
+                    SceneManager.LoadScene("Level 1");
+                    break;
+                case "Level 1":
+                    SceneManager.LoadScene("Level 2");
+                    break;
+                case "Level 2":
+                    SceneManager.LoadScene("Level 3");
+                    break;
+                case "Level 3":
+                    SceneManager.LoadScene("Level 4");
+                    break;
+                case "Level 4":
+                    SceneManager.LoadScene("Level 5");
+                    break;
+            }
+            Debug.Log("Level Complete");
+
+            hasKey = false;
+
+        }
+
+
+
     }
 
 }

@@ -9,7 +9,7 @@ public class CameraManager : MonoBehaviour
     private CinemachineDecollider decollider;
     private CinemachineRotationComposer rotationComposer;
 
-    private float shrunkenOrbitModifier = 0.2f;
+    private float shrunkenOrbitModifier = 0.075f;
 
     private float normalTopOrbitHeight;
     private float normalTopOrbitRadius;
@@ -21,20 +21,20 @@ public class CameraManager : MonoBehaviour
     private float normalBottomOrbitRadius;
 
 
-    public float shrunkenTopOrbitHeight;
-    public float shrunkenTopOrbitRadius;
+    private float shrunkenTopOrbitHeight;
+    private float shrunkenTopOrbitRadius;
 
-    public float shrunkenMiddleOrbitHeight;
-    public float shrunkenMiddleOrbitRadius;
+    private float shrunkenMiddleOrbitHeight;
+    private float shrunkenMiddleOrbitRadius;
 
-    public float shrunkenBottomOrbitHeight;
-    public float shrunkenBottomOrbitRadius;
+    private float shrunkenBottomOrbitHeight;
+    private float shrunkenBottomOrbitRadius;
 
     private float normalDecolliderRadius;
     [SerializeField] private float shrunkenDecolliderRadius = 2.0f;
 
     private float normalRotationComposerOffset;
-    private float shrunkenRotationComposerOffset = 0.225f;
+    private float shrunkenRotationComposerOffset = 0.08f;
 
 
     void Start()

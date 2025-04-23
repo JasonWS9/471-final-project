@@ -32,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float maxJumpHeight;
 
+    [SerializeField] private float shrunkenJumpHeightModifier;
+
     [SerializeField] private float maxJumpTime;
 
     [SerializeField] private float normalMaxJumpHeight = 5.0f;
@@ -41,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
     private float lastTimeGrounded;
 
     private float gravity;
-    private float groundedGravity = -2f;
+    private float groundedGravity = -0.5f;
 
     private bool isGrounded;
 
@@ -79,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
 
     void SetUpJumpVariables()
     {
-        shrunkenMaxJumpHeight = normalMaxJumpHeight * playerSize.shrinkScale;
+        shrunkenMaxJumpHeight = (normalMaxJumpHeight + shrunkenJumpHeightModifier) * playerSize.shrinkScale;
 
         //Math to make jump variables accurate
         float timeToApex = maxJumpTime / 2;

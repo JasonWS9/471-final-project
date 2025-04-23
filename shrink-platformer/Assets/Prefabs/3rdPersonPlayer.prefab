@@ -250,10 +250,12 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   playerSize: {fileID: 1533908440361055376}
   walkingPlayerSpeed: 5
-  sprintingPlayerSpeed: 10
+  sprintingPlayerSpeed: 5
   shrunkenSpeedModifier: 0.2
-  maxJumpTime: 0.8
-  normalMaxJumpHeight: 8
+  shrunkenJumpHeightModifier: 2
+  maxJumpTime: 0.9
+  normalMaxJumpHeight: 9
+  coyoteTime: 0.05
   isShrunken: 0
 --- !u!114 &1533908440361055376
 MonoBehaviour:
@@ -270,7 +272,7 @@ MonoBehaviour:
   cameraManager: {fileID: 0}
   playerMovement: {fileID: 7600447167500918883}
   isShrunk: 0
-  shrinkScale: 0.1
+  shrinkScale: 0.05
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
