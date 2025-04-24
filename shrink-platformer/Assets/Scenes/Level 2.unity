@@ -119,17 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &4212253 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3758768127277567901, guid: 69aa9af6a97b13649b70d1c9b6923728, type: 3}
-  m_PrefabInstance: {fileID: 1468253055}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb20537d74b8e784a85cde102d7841b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &134597181
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,14 +1131,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 657330535812201623, guid: 86c1784451cdf3546b39022220f12c16, type: 3}
-      propertyPath: respawnPoint
-      value: 
-      objectReference: {fileID: 243687169}
-    - target: {fileID: 1533908440361055376, guid: 86c1784451cdf3546b39022220f12c16, type: 3}
-      propertyPath: cameraManager
-      value: 
-      objectReference: {fileID: 4212253}
     - target: {fileID: 6679911803040560559, guid: 86c1784451cdf3546b39022220f12c16, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1190,10 +1171,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7600447167500918883, guid: 86c1784451cdf3546b39022220f12c16, type: 3}
-      propertyPath: cameraTransform
-      value: 
-      objectReference: {fileID: 1419400943}
     - target: {fileID: 7900847019303111499, guid: 86c1784451cdf3546b39022220f12c16, type: 3}
       propertyPath: m_Name
       value: 3rdPersonPlayer

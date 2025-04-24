@@ -50,13 +50,13 @@ public class PlayerSize : MonoBehaviour
 
 
 
-        if (!isShrunk && !playerMovement.isShrunken && canChangeSize)
+        if (!isShrunk && !playerMovement.isShrunken && canChangeSize && characterController.isGrounded)
         {
             ShrinkPlayer();
             StartCoroutine(SizeChangeCooldownRoutine());
 
         }
-        else if (isShrunk && playerMovement.isShrunken && canChangeSize)
+        else if (isShrunk && playerMovement.isShrunken && canChangeSize && characterController.isGrounded)
         {
             RegrowPlayer();
             StartCoroutine(SizeChangeCooldownRoutine());

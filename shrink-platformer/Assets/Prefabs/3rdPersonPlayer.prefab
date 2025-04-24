@@ -253,7 +253,7 @@ MonoBehaviour:
   sprintingPlayerSpeed: 5
   shrunkenSpeedModifier: 0.2
   shrunkenJumpHeightModifier: 2
-  maxJumpTime: 0.9
+  maxJumpTime: 1
   normalMaxJumpHeight: 9
   coyoteTime: 0.05
   isShrunken: 0
