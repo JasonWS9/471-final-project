@@ -53,10 +53,13 @@ public class PlayerMovement : MonoBehaviour
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip jumpSound;
+
+    private Animator anim;
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
 
+        anim = GetComponent<Animator>();
 
         characterController = GetComponent<CharacterController>();
 
@@ -118,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isJumping = true;
             PlaySoundEffect();
+            anim.SetTrigger("IsJumping");
             currentVerticalMovement.y = initialJumpVelocity * 0.5f;
 
 
@@ -192,8 +196,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (horizontalMovement.magnitude > 0.01f)
         {
+            anim.SetBool("IsWalking", true);
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+        } else
+        {
+            anim.SetBool("IsWalking", false);
         }
          
     }
