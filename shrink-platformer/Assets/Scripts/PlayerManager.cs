@@ -21,9 +21,15 @@ public class PlayerManager : MonoBehaviour
     private bool hasKey = false;
     private int currentLevel;
 
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip damageSound;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         health = maxHealth;
 
     }
@@ -40,6 +46,8 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SceneManager.LoadScene("Title Screen");
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
         }
     }
 
@@ -125,9 +133,9 @@ public class PlayerManager : MonoBehaviour
         {
             playerSize.RegrowPlayer();
         }
+
+        audioSource.PlayOneShot(damageSound);
     }
-
-
     private void ExitLevel()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -166,5 +174,6 @@ public class PlayerManager : MonoBehaviour
 
 
     }
+
 
 }

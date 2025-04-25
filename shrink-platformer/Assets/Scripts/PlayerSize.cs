@@ -25,8 +25,16 @@ public class PlayerSize : MonoBehaviour
 
     public LayerMask collisionMask;
 
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip growSound;
+    [SerializeField] private AudioClip shrinkSound;
+    [SerializeField] private AudioClip cantGrowErrorSound;
+
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
+
         playerTransform = GetComponent<Transform>();
         characterController = GetComponent<CharacterController>();
     }
@@ -46,9 +54,6 @@ public class PlayerSize : MonoBehaviour
     private bool canChangeSize = true;
     public void OnSizeChange()
     {
-
-
-
 
         if (!isShrunk && !playerMovement.isShrunken && canChangeSize && characterController.isGrounded)
         {
@@ -87,7 +92,7 @@ public class PlayerSize : MonoBehaviour
 
         characterController.skinWidth = shrunkenSkinWidth;
 
-
+        audioSource.PlayOneShot(shrinkSound);
       
 
         isShrunk = true;
@@ -115,6 +120,7 @@ public class PlayerSize : MonoBehaviour
         if (!canGrow)
         {
             Debug.Log("Cant Grow");
+            audioSource.PlayOneShot(cantGrowErrorSound);
             return;
         }
 
@@ -126,6 +132,7 @@ public class PlayerSize : MonoBehaviour
         characterController.stepOffset = originalCharacterControllerStepOffset;
         characterController.skinWidth = originalCharacterControllerSkinWidth;
 
+        audioSource.PlayOneShot(growSound);
 
         isShrunk = false;
         playerMovement.isShrunken = false;

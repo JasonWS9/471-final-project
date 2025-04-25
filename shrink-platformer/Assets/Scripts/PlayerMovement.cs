@@ -50,11 +50,14 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool isShrunken = false;
 
     private Vector3 velocity;
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip jumpSound;
     void Awake()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-            
+        audioSource = GetComponent<AudioSource>();
+
+
         characterController = GetComponent<CharacterController>();
 
         HandleGravity();
@@ -114,10 +117,13 @@ public class PlayerMovement : MonoBehaviour
         if ((characterController.isGrounded || canCoyoteTime) && !isJumping && isJumpPressed)
         {
             isJumping = true;
+            PlaySoundEffect();
             currentVerticalMovement.y = initialJumpVelocity * 0.5f;
 
+
             //Detects when player lands
-        } else if (!isJumpPressed && isJumping && characterController.isGrounded)
+        }
+        else if (!isJumpPressed && isJumping && characterController.isGrounded)
         {
             isJumping = false;
         }
@@ -162,6 +168,11 @@ public class PlayerMovement : MonoBehaviour
         movement = moveVal.Get<Vector2>();
     }
 
+    private void PlaySoundEffect()
+    {
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(jumpSound);
+    }
     private void Movement()
     {
         float MoveX = movement.x;
