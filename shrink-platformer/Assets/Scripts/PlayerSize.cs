@@ -29,7 +29,7 @@ public class PlayerSize : MonoBehaviour
     private AudioSource audioSource;
     [SerializeField] private AudioClip growSound;
     [SerializeField] private AudioClip shrinkSound;
-    [SerializeField] private AudioClip cantGrowErrorSound;
+    public AudioClip cantGrowErrorSound;
 
     private void Awake()
     {

@@ -7,74 +7,89 @@ using UnityEngine.UI;
 public class PlayerManager : MonoBehaviour
 {
     public PlayerSize playerSize;
+    public MenuManager menuManager;
 
-    public int currentCollectibleCount;
-    private int totalCollectibleCount = 100;
+    private int currentCollectibleCount = 0;
+    [HideInInspector] public int totalCollectibleCount;
+    public int level1TotalCollectibleCount = 33;
+    public int level2TotalCollectibleCount = 60;
+    public int level3TotalCollectibleCount = 70;
+    public int level4TotalCollectibleCount = 80;
+    public int level5TotalCollectibleCount = 90;
 
     public Transform respawnPoint;
-
-
-    private int health;
-    private int maxHealth = 3;
-
-    private bool canTakeDamage = true;
-    private float damageCooldown = 1f;
 
     private bool hasKey = false;
     private int currentLevel;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip damageSound;
-
+    [SerializeField] private AudioClip collectibleSound;
 
     [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private Image bananaImage;
-    [SerializeField] private Sprite bananaSprite;
+    [SerializeField] private TextMeshProUGUI keyText;
 
-    [SerializeField] private Image keyImage;
-    [SerializeField] private Sprite keySprite;
+    private bool needKeyCanPopUp = true;
+
+    private Color scoreTextColor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        scoreTextColor = scoreText.color;
         audioSource = GetComponent<AudioSource>();
+        Scene currentScene = SceneManager.GetActiveScene();
+        Debug.Log(scoreText.text);
+        Debug.Log(level1TotalCollectibleCount.ToString());
+        Debug.Log("Current scene: " + currentScene.name);
+        switch (currentScene.name)
+        {
+            case "Level 1":
+                totalCollectibleCount = level1TotalCollectibleCount;
+                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
 
-        health = maxHealth;
+                break;
+            case "Level 2":
+                totalCollectibleCount = level2TotalCollectibleCount;
+                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
 
-        scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
+                break;
+            case "Level 3":
+                totalCollectibleCount = level3TotalCollectibleCount;
+                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
+
+                break;
+            case "Level 4":
+                totalCollectibleCount = level4TotalCollectibleCount;
+                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
+
+                break;
+            case "Level 5":
+                totalCollectibleCount = level5TotalCollectibleCount;
+                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
+
+                break;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
 
-
-        if (health <= 0)
-        {
-            Death();
-        }
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene("Title Screen");
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-        }
-    }
+            menuManager.PauseGame();
 
-    private void LoseHealth()
-    {
-        if (!canTakeDamage)
+        }
+
+        if (hasKey)
         {
-            return;
+            keyText.text = "Collected: 1/1";
         }
-    }
-
-    private IEnumerator DamageCheck()
-    {
-        canTakeDamage = false;
-        yield return new WaitForSeconds(damageCooldown);
-        canTakeDamage = true;
+        else
+        {
+            keyText.text = "Collected: 0/1";
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -87,26 +102,12 @@ public class PlayerManager : MonoBehaviour
         if (hit.gameObject.CompareTag("Collectible"))
         {
             Destroy(hit.gameObject);
-            currentCollectibleCount++;
-            scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
-            if (currentCollectibleCount >= totalCollectibleCount)
-            {
-                scoreText.color = Color.yellow;
-                
-            }
-            else
-            {
-                scoreText.color = Color.white;
-            }
-
-            Debug.Log("Collectables: " + currentCollectibleCount);
-
+            Collectible();
         }
 
         if (hit.gameObject.CompareTag("Enemy"))
         {
-            LoseHealth();
+            Death();
         }
 
         if (hit.gameObject.CompareTag("ShrunkenEnemy"))
@@ -118,7 +119,7 @@ public class PlayerManager : MonoBehaviour
 
             if (playerSize.isShrunk)
             {
-                LoseHealth();
+                Death();
             }
         }
 
@@ -126,13 +127,11 @@ public class PlayerManager : MonoBehaviour
         {
             Death();
         }
-
         if (hit.gameObject.CompareTag("Key"))
         {
             hasKey = true;
             Debug.Log("GotKey");
             Destroy(hit.gameObject);
-
         }
 
         if (hit.gameObject.CompareTag("Exit"))
@@ -142,10 +141,16 @@ public class PlayerManager : MonoBehaviour
 
     }
 
+    private IEnumerator CollectiblePitchReset()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log("Pitch Reset");
+        audioSource.pitch = 1.0f;
+    }
+
     private void Death()
     {
         transform.position = respawnPoint.transform.position;
-        health = maxHealth;
         if(playerSize.isShrunk)
         {
             playerSize.RegrowPlayer();
@@ -160,6 +165,12 @@ public class PlayerManager : MonoBehaviour
         if (!hasKey)
         {
             Debug.Log("Need Key");
+            if (needKeyCanPopUp == true)
+            {
+                audioSource.PlayOneShot(playerSize.cantGrowErrorSound);
+                StartCoroutine(menuManager.NeedKey());
+                StartCoroutine(NeedKeyCooldown());
+            }
             return; 
         } else if (hasKey)
         {
@@ -168,29 +179,64 @@ public class PlayerManager : MonoBehaviour
             {
                 case "SampleScene":
                     SceneManager.LoadScene("Level 1");
+                    totalCollectibleCount = level1TotalCollectibleCount;
                     break;
                 case "Level 1":
                     SceneManager.LoadScene("Level 2");
+                    totalCollectibleCount = level2TotalCollectibleCount;
+
                     break;
                 case "Level 2":
                     SceneManager.LoadScene("Level 3");
+                    totalCollectibleCount = level3TotalCollectibleCount;
+
                     break;
                 case "Level 3":
                     SceneManager.LoadScene("Level 4");
+                    totalCollectibleCount = level4TotalCollectibleCount;
+
                     break;
                 case "Level 4":
                     SceneManager.LoadScene("Level 5");
+                    totalCollectibleCount = level5TotalCollectibleCount;
+
                     break;
             }
             Debug.Log("Level Complete");
 
             hasKey = false;
+            currentCollectibleCount = 0;
 
         }
 
-
-
     }
 
+    private void Collectible()
+    {
+        currentCollectibleCount++;
+        scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
+
+
+        audioSource.PlayOneShot(collectibleSound);
+        audioSource.pitch += 0.05f;
+        StartCoroutine("CollectiblePitchReset");
+
+        if (currentCollectibleCount >= totalCollectibleCount)
+        {
+            scoreText.color = Color.yellow;
+
+        }
+        else
+        {
+            scoreText.color = scoreTextColor;
+        }
+    }
+    private IEnumerator NeedKeyCooldown()
+    {
+        needKeyCanPopUp = false;
+        yield return new WaitForSeconds(2);
+        needKeyCanPopUp = true;
+
+    }
 
 }

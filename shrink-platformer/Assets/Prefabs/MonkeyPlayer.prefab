@@ -122,8 +122,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSize: {fileID: 980760726812689921}
+  menuManager: {fileID: 0}
+  totalCollectibleCount: 0
+  level1TotalCollectibleCount: 33
+  level2TotalCollectibleCount: 60
+  level3TotalCollectibleCount: 70
+  level4TotalCollectibleCount: 80
+  level5TotalCollectibleCount: 90
   respawnPoint: {fileID: 0}
   damageSound: {fileID: 8300000, guid: ad36c2cbf548d0847af936981fe4eaca, type: 3}
+  collectibleSound: {fileID: 8300000, guid: eb2906b8158e05e4ea1ddef33b97b4b4, type: 3}
+  scoreText: {fileID: 0}
+  keyText: {fileID: 0}
+  bananaSprite: {fileID: 0}
+  keySprite: {fileID: 0}
 --- !u!114 &8839218164599051340
 MonoBehaviour:
   m_ObjectHideFlags: 0
