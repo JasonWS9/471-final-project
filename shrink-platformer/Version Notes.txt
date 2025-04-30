@@ -1,16 +1,18 @@
 Controls:
 
 Movement: WASD
-Looking Around: Spacebar
+Looking Around: Mouse
 Jump: Spacebar
 Change Size: E
 
 Instructions: Traverse the levels using your ability to shrink and grow to find the key and bring it to the door. Wooden platforms can only be traversed when small
 
-Changelog From Alpha:
-- Added two levels
-- Added key and door
-- Added obstacles
-- Adjusted physics
-- Added Textures
+Changelog From Beta:
 - Bugfixes
+- Adjusted hitboxes
+- Added tutorial
+- Added third level
+- Changed design of levels
+- Added sound effects
+- Added music
+- Visual Updates
