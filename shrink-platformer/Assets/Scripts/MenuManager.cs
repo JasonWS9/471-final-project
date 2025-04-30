@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
 
-    private bool isPaused = false;
+    [HideInInspector] public bool isPaused = false;
 
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject needKeyPopUp;
@@ -101,6 +101,7 @@ public class MenuManager : MonoBehaviour
     }
     public void LoadMainMenu()
     {
+        Debug.Log("asdasd");
         SceneManager.LoadScene("TitleScreen");
         Time.timeScale = 1;
     }

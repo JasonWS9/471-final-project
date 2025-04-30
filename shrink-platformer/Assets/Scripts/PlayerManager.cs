@@ -22,14 +22,22 @@ public class PlayerManager : MonoBehaviour
     private bool hasKey = false;
     private int currentLevel;
 
-    private AudioSource audioSource;
+    [SerializeField] AudioSource sfxSource;
+    [SerializeField] AudioSource musicSource;
     [SerializeField] private AudioClip damageSound;
     [SerializeField] private AudioClip collectibleSound;
+
+
+    [SerializeField] private AudioClip level1Music;
+    [SerializeField] private AudioClip level2Music;
+    [SerializeField] private AudioClip level3Music;
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI keyText;
 
     private bool needKeyCanPopUp = true;
+
+    [SerializeField] float musicVolume = 1f;
 
     private Color scoreTextColor;
 
@@ -37,7 +45,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         scoreTextColor = scoreText.color;
-        audioSource = GetComponent<AudioSource>();
+        sfxSource = GetComponent<AudioSource>();
         Scene currentScene = SceneManager.GetActiveScene();
         Debug.Log(scoreText.text);
         Debug.Log(level1TotalCollectibleCount.ToString());
@@ -47,27 +55,20 @@ public class PlayerManager : MonoBehaviour
             case "Level 1":
                 totalCollectibleCount = level1TotalCollectibleCount;
                 scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
+                musicSource.clip = level1Music;
+                musicSource.Play();
                 break;
             case "Level 2":
                 totalCollectibleCount = level2TotalCollectibleCount;
                 scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
+                musicSource.clip = level2Music;
+                musicSource.Play();
                 break;
             case "Level 3":
                 totalCollectibleCount = level3TotalCollectibleCount;
                 scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
-                break;
-            case "Level 4":
-                totalCollectibleCount = level4TotalCollectibleCount;
-                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
-                break;
-            case "Level 5":
-                totalCollectibleCount = level5TotalCollectibleCount;
-                scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
-
+                musicSource.clip = level3Music;
+                musicSource.Play();
                 break;
         }
     }
@@ -89,6 +90,16 @@ public class PlayerManager : MonoBehaviour
         else
         {
             keyText.text = "Collected: 0/1";
+        }
+
+
+        if (menuManager.isPaused)
+        {
+            musicSource.volume = 0;
+        }
+        else
+        {
+            musicSource.volume = musicVolume;
         }
     }
 
@@ -145,7 +156,7 @@ public class PlayerManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
         Debug.Log("Pitch Reset");
-        audioSource.pitch = 1.0f;
+        sfxSource.pitch = 1.0f;
     }
 
     private void Death()
@@ -156,7 +167,7 @@ public class PlayerManager : MonoBehaviour
             playerSize.RegrowPlayer();
         }
 
-        audioSource.PlayOneShot(damageSound);
+        sfxSource.PlayOneShot(damageSound);
     }
     private void ExitLevel()
     {
@@ -167,7 +178,7 @@ public class PlayerManager : MonoBehaviour
             Debug.Log("Need Key");
             if (needKeyCanPopUp == true)
             {
-                audioSource.PlayOneShot(playerSize.cantGrowErrorSound);
+                sfxSource.PlayOneShot(playerSize.cantGrowErrorSound);
                 StartCoroutine(menuManager.NeedKey());
                 StartCoroutine(NeedKeyCooldown());
             }
@@ -192,14 +203,8 @@ public class PlayerManager : MonoBehaviour
 
                     break;
                 case "Level 3":
-                    SceneManager.LoadScene("Level 4");
+                    SceneManager.LoadScene("TitleScreen");
                     totalCollectibleCount = level4TotalCollectibleCount;
-
-                    break;
-                case "Level 4":
-                    SceneManager.LoadScene("Level 5");
-                    totalCollectibleCount = level5TotalCollectibleCount;
-
                     break;
             }
             Debug.Log("Level Complete");
@@ -217,8 +222,8 @@ public class PlayerManager : MonoBehaviour
         scoreText.text = "Collected: " + currentCollectibleCount.ToString() + "/" + totalCollectibleCount.ToString();
 
 
-        audioSource.PlayOneShot(collectibleSound);
-        audioSource.pitch += 0.05f;
+        sfxSource.PlayOneShot(collectibleSound);
+        sfxSource.pitch += 0.05f;
         StartCoroutine("CollectiblePitchReset");
 
         if (currentCollectibleCount >= totalCollectibleCount)
